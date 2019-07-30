@@ -1,12 +1,21 @@
 package com.bestrpg.app;
 
-
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 public class BasicHero {
-
+	@NotEmpty(message = "invalid name")
 	private String HeroName;
 	private HeroClassEnum HeroClass;
+	@NotNull(message = "invalid Level")
 	private int Level;
+	@NotNull(message = "invalid XP")
 	private int XP;
 	private HeroArtefacsEnum HeroEfacs;
 	private char [][] Map;

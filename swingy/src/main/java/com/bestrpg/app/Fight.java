@@ -199,7 +199,7 @@ public class Fight {
             }
 
                 new DeleteLoser(basicHero);
-                Printer.OutputplayText(Bridge.getContent() + "you were kill brutaly but the gods of valhala accept your secrifice");
+                Printer.OutputplayText("you were kill brutaly but the gods of valhala accept your secrifice");
                 System.exit(0);
         }
         return 0;

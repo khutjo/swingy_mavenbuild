@@ -3,8 +3,14 @@ package com.bestrpg.app;
 
 import java.util.Iterator;
 import java.util.Stack;
-
-
+import java.util.Set;
+ 
+import javax.validation.constraints.Size;
+import javax.validation.constraints.Pattern;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 
 //************************************************************************************************
@@ -18,14 +24,24 @@ public class CreateHero{
         private GuiToConsoleController Bridge;
         private WriteAction Printer;
         private Stack<String> NamesInUse;
-        private BasicHero basicHero;
+		private BasicHero basicHero;
+		private ValidatorFactory factory;
+		private Validator validator;
+		
+		@Size(max = 12, min = 3, message = "invalid size (3 - 11)")
+		@Pattern(regexp = "[a-zA-Z0-9]+", message = "You name contains invalid charectors (A-z/0-9)\n Enter new name")
+		private String textinput;
     
         public CreateHero(Stack<BasicHero> savedheros, WriteAction printer, GuiToConsoleController bridge){
             SavedHeros = savedheros;
             Printer = printer;
-            Bridge = bridge;
+			Bridge = bridge;
+			factory = Validation.buildDefaultValidatorFactory();
+         
+			//It validates bean instances
+			validator = factory.getValidator();
         }
-        
+		
 	public int Save (String input){
 		if (input.equals("no"))
 			return -1;
@@ -40,18 +56,17 @@ public class CreateHero{
 
 	public int getnewHeroName (String input){
 		///output
-//		regax
-		if (input.equals("")){
-			Printer.OutputplayTextln("You cannot enter nothing as a name.\n Enter new name");
-                        Bridge.setTX(false).settextField(true);
-                        return 0;
+		textinput = input;
+		Set<ConstraintViolation<CreateHero>> constraintViolations = validator.validate(this);
+
+		if (constraintViolations.size() > 0){
+			for (ConstraintViolation<CreateHero> violation : constraintViolations) {
+				Printer.OutputplayText(violation.getMessage()+"\n");
+				Bridge.setTX(false).settextField(true);
+				return 0;
+			}
 		}
 
-		if (!input.matches("[a-zA-Z0-9]+")){
-			Printer.OutputplayTextln("You name contains invalid charectors (A-z/0-9)\n Enter new name");
-			Bridge.setTX(false).settextField(true);
-                        return 0;
-		}
 		if (NameInUse(input)){
 			Printer.OutputplayTextln("Tha name "+input+" is in use choose another one\n Enter new name");
 			Bridge.setTX(false).settextField(true);
